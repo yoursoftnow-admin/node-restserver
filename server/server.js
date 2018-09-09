@@ -1,7 +1,13 @@
 require('./config/config');
-const express = require('express')
+const express = require('express');
+const mongoose = require('mongoose');
+console.log(process.env.URLDB);
+mongoose.connect(process.env.URLDB, (e, r) => {
+    if (e) throw e;
+    console.log('Base de datos ONLINE');
+});
 
-const app = express()
+const app = express();
 const port = process.env.PORT;
 
 const bodyParser = require('body-parser')
@@ -13,36 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-
-app.get('/usuarios', function(req, res) {
-    res.json('Hello World')
-})
-
-app.post('/usuario', function(req, res) {
-    const body = req.body;
-    if (body.nombre === undefined) {
-        res.status(400).json({
-            status: "Error",
-            mensaje: "Es necesario que agregue el campo nombre",
-            err: "Formulario no completo"
-        })
-    } else {
-        res.json({
-            usuario: body
-        })
-
-    }
-})
-
-app.put('/usuario/:id', function(req, res) {
-    const id = req.params.id;
-    res.json({ id })
-})
-
-app.delete('/usuario/:id', function(req, res) {
-    const id = req.params.id;
-    res.json({ id })
-})
+app.use(require('./routes/usuario'));
 
 
 app.listen(port, () => {
